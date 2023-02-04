@@ -50,11 +50,11 @@ public class Solution {
 	@JoinColumn(name = "question_id")
 	@JsonView(SolutionView.class)
 	private Question question;
-	
+
 	@OneToMany(mappedBy = "solution", fetch = FetchType.LAZY)
-	
+
 	private List<Comment> comments;
-	
+
 	@OneToMany(mappedBy = "solution", fetch = FetchType.LAZY)
 	private List<Vote> votes;
 
@@ -140,7 +140,7 @@ public class Solution {
 	public void setQuestion(Question question) {
 		this.question = question;
 	}
-	
+
 	@PrePersist
 	protected void onCreate() {
 		this.createdAt = new Date();

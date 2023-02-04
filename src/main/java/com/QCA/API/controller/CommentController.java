@@ -1,6 +1,7 @@
 package com.QCA.API.controller;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class CommentController {
 	@Autowired
 	private CommentRepository cr;
-	
+
 	@Autowired
 	public UserRepository ur;
 
@@ -43,15 +44,14 @@ public class CommentController {
 
 	@GetMapping("problem/solutions/comments/{solution_id}")
 	public ResponseEntity<String> getComments(@PathVariable long solution_id) throws JsonProcessingException {
-		List<Comment> comments = cr.findAllBySolutionId(solution_id);
-				
+		List<Comment> comments = cr.findAllBySolutionIdAndParent(solution_id, null);
+
 		String json = objectMapper.writerWithView(CommentView.class).writeValueAsString(comments);
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
 	}
 
 	@PostMapping("problem/solutions/comments/")
 	public ResponseEntity<String> saveComments(@RequestBody Comment comment) throws JsonProcessingException {
-
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = auth.getPrincipal();
@@ -61,6 +61,7 @@ public class CommentController {
 			comment.setOwner(user);
 			comment.setCreatedAt(new Date());
 			comment.setUpdatedAt(new Date());
+			comment.setReplies(new ArrayList<Comment>());
 			cr.save(comment);
 
 			String json = objectMapper.writerWithView(CommentView.class).writeValueAsString(comment);

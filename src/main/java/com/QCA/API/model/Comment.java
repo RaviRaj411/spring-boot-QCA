@@ -6,12 +6,14 @@ import java.util.List;
 import javax.persistence.*;
 
 import com.QCA.API.jsonView.CommentView;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonView;
-
-
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "comment")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +36,7 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     @JsonView(CommentView.class)
+    @JsonIdentityReference(alwaysAsId = true)
     private MyUser owner;
 
     @ManyToOne
@@ -45,18 +48,20 @@ public class Comment {
     @JoinColumn(name = "solution_id")
     @JsonView(CommentView.class)
     private Solution solution;
-    
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    private List<Comment> childComments;
 
-    public Comment() {}
+    @JsonView(CommentView.class)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+    private List<Comment> replies;
+
+    public Comment() {
+    }
 
     public Comment(String comment, MyUser owner, Solution solution) {
         this.comment = comment;
         this.owner = owner;
         this.solution = solution;
-		this.createdAt = new Date();
-		this.updatedAt = new Date();
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
     }
 
     public Long getId() {
@@ -99,12 +104,12 @@ public class Comment {
         this.owner = owner;
     }
 
-    public List<Comment> getChildComments() {
-        return childComments;
+    public List<Comment> getReplies() {
+        return replies;
     }
 
-    public void setChildComments(List<Comment> childComments) {
-        this.childComments = childComments;
+    public void setReplies(List<Comment> replies) {
+        this.replies = replies;
     }
 
     public Comment getParent() {
@@ -122,14 +127,14 @@ public class Comment {
     public void setSolution(Solution solution) {
         this.solution = solution;
     }
-    
-	@PrePersist
-	protected void onCreate() {
-		this.createdAt = new Date();
-	}
 
-	@PreUpdate
-	protected void onUpdate() {
-		this.updatedAt = new Date();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
+    }
 }
