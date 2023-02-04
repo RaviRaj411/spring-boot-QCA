@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,7 +48,7 @@ public class QuestionController {
 		String json = objectMapper.writerWithView(QuestionView.class).writeValueAsString(questions);
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
 	}
-	
+
 	@GetMapping("problems/{id}")
 	public ResponseEntity<String> getQuestionsbyID(@PathVariable long id) throws JsonProcessingException {
 		Optional<Question> q = qr.findById(id);
@@ -62,7 +63,7 @@ public class QuestionController {
 	@PostMapping("problems/")
 	public ResponseEntity<String> saveQuestion(@RequestBody Question question) throws JsonProcessingException {
 
-//    	Question questions = qr.save(Question);
+		// Question questions = qr.save(Question);
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = auth.getPrincipal();
@@ -80,28 +81,29 @@ public class QuestionController {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
 	}
-	
-	@PatchMapping("problems/{id}")
-	public ResponseEntity<String> updateQuestion(@RequestBody Map<String, Object> updates, @PathVariable long id) throws JsonProcessingException {
 
+	@PatchMapping("problems/{id}/")
+	public ResponseEntity<String> updateQuestion(@RequestBody Map<String, Object> updates, @PathVariable long id)
+			throws JsonProcessingException {
+		System.out.println(id);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = auth.getPrincipal();
 		if (principal instanceof UserDetails) {
 			String username = ((UserDetails) principal).getUsername();
 			MyUser user = ur.findByUsername(username);
-			
-			Optional<Question> q=qr.findById(id);
-			if(q.isPresent()) {
-				Question question =q.get();
-				updates.forEach((k,v)->{
-					Field field=ReflectionUtils.findField(Question.class, k);
+
+			Optional<Question> q = qr.findById(id);
+			if (q.isPresent()) {
+				Question question = q.get();
+				updates.forEach((k, v) -> {
+					Field field = ReflectionUtils.findField(Question.class, k);
 					field.setAccessible(true);
 					ReflectionUtils.setField(field, question, v);
-				} );
+				});
 				question.setUpdatedAt(new Date());
 				qr.save(question);
 				String json = objectMapper.writerWithView(QuestionView.class).writeValueAsString(question);
-				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);	
+				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
 			}
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
