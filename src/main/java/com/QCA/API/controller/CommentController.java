@@ -59,8 +59,8 @@ public class CommentController {
 			String username = ((UserDetails) principal).getUsername();
 			MyUser user = ur.findByUsername(username);
 			comment.setOwner(user);
-			comment.setCreatedAt(new Date());
-			comment.setUpdatedAt(new Date());
+			comment.setCreated_at(new Date());
+			comment.setUpdated_at(new Date());
 			comment.setReplies(new ArrayList<Comment>());
 			cr.save(comment);
 
@@ -88,7 +88,7 @@ public class CommentController {
 					field.setAccessible(true);
 					ReflectionUtils.setField(field, comment, v);
 				});
-				comment.setUpdatedAt(new Date());
+				comment.setUpdated_at(new Date());
 				cr.save(comment);
 				String json = objectMapper.writerWithView(CommentView.class).writeValueAsString(comment);
 				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);

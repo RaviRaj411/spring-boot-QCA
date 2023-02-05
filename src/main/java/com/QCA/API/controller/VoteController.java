@@ -1,6 +1,5 @@
 package com.QCA.API.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,6 +33,7 @@ public class VoteController {
 	public SolutionRepository sr;
 	@Autowired
 	private ObjectMapper objectMapper;
+
 	@GetMapping("votes/{solution_id}")
 	public ResponseEntity<String> getVote(@PathVariable long solution_id) throws JsonProcessingException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -50,7 +50,7 @@ public class VoteController {
 		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	}
-	
+
 	@PostMapping("votes/")
 	public ResponseEntity<String> vote(@RequestBody Vote v) throws JsonProcessingException {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -58,15 +58,34 @@ public class VoteController {
 		if (principal instanceof UserDetails) {
 			String username = ((UserDetails) principal).getUsername();
 			MyUser user = ur.findByUsername(username);
-			Solution solution = v.getSolution();
-			Boolean voteType = v.getVoteType(); 
-			Vote vote = vr.findAllBySolutionIdAndUser(solution.getId(), user);		
+			Solution solution = sr.findById(v.getSolution().getId()).get();
+			Boolean voteType = v.getVote_type();
+			Vote vote = vr.findAllBySolutionIdAndUser(solution.getId(), user);
+
 			if (vote == null) {
 				vote = new Vote(voteType, user, solution);
+			} else {
+				if (vote.getVote_type() == true) {
+					solution.setUp_votes(solution.getUp_votes() - 1);
+				} else {
+					solution.setDown_votes(solution.getDown_votes() - 1);
+				}
+				sr.save(solution);
 			}
-			vote.setVoteType(voteType);
-			System.out.println("4");			
-			vr.save(vote);
+			vote.setVote_type(voteType);
+
+			if (voteType == null) {
+				vr.delete(vote);
+			} else {
+				vr.save(vote);
+				if (vote.getVote_type() == true) {
+					solution.setUp_votes(solution.getUp_votes() + 1);
+				} else {
+					solution.setDown_votes(solution.getDown_votes() + 1);
+				}
+				sr.save(solution);
+			}
+
 			String json = objectMapper.writerWithView(VoteView.class).writeValueAsString(vote);
 			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
 		}

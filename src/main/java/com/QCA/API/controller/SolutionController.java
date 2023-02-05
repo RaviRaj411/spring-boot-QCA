@@ -28,12 +28,13 @@ import com.QCA.API.repository.SolutionRepository;
 import com.QCA.API.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 @RestController
 public class SolutionController {
 
 	@Autowired
 	private SolutionRepository sr;
-	
+
 	@Autowired
 	public UserRepository ur;
 
@@ -43,7 +44,7 @@ public class SolutionController {
 	@GetMapping("problem/solutions/{question_id}")
 	public ResponseEntity<String> getSolution(@PathVariable long question_id) throws JsonProcessingException {
 		List<Solution> solutions = sr.findAllByQuestionId(question_id);
-				
+
 		String json = objectMapper.writerWithView(SolutionView.class).writeValueAsString(solutions);
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);
 	}
@@ -51,15 +52,14 @@ public class SolutionController {
 	@PostMapping("solutions/")
 	public ResponseEntity<String> saveSolution(@RequestBody Solution solution) throws JsonProcessingException {
 
-
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Object principal = auth.getPrincipal();
 		if (principal instanceof UserDetails) {
 			String username = ((UserDetails) principal).getUsername();
 			MyUser user = ur.findByUsername(username);
 			solution.setOwner(user);
-			solution.setCreatedAt(new Date());
-			solution.setUpdatedAt(new Date());
+			solution.setCreated_at(new Date());
+			solution.setUpdated_at(new Date());
 			sr.save(solution);
 
 			String json = objectMapper.writerWithView(SolutionView.class).writeValueAsString(solution);
@@ -86,7 +86,7 @@ public class SolutionController {
 					field.setAccessible(true);
 					ReflectionUtils.setField(field, solution, v);
 				});
-				solution.setUpdatedAt(new Date());
+				solution.setUpdated_at(new Date());
 				sr.save(solution);
 				String json = objectMapper.writerWithView(SolutionView.class).writeValueAsString(solution);
 				return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(json);

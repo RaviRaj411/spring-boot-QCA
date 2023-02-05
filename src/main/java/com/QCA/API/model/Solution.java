@@ -23,23 +23,23 @@ public class Solution {
 
 	@Column(name = "created_at")
 	@JsonView(SolutionView.class)
-	private Date createdAt;
+	private Date created_at;
 
 	@Column(name = "updated_at")
 	@JsonView(SolutionView.class)
-	private Date updatedAt;
+	private Date updated_at;
 
 	@Column(name = "up_votes")
 	@JsonView(SolutionView.class)
-	private int upVotes;
+	private int up_votes;
 
 	@Column(name = "down_votes")
 	@JsonView(SolutionView.class)
-	private int downVotes;
+	private int down_votes;
 
 	@Column(name = "is_correct")
 	@JsonView(SolutionView.class)
-	private boolean isCorrect;
+	private boolean is_correct;
 
 	@ManyToOne
 	@JoinColumn(name = "owner_id")
@@ -65,8 +65,8 @@ public class Solution {
 		this.solution = solution;
 		this.owner = owner;
 		this.question = question;
-		this.createdAt = new Date();
-		this.updatedAt = new Date();
+		this.created_at = new Date();
+		this.updated_at = new Date();
 	}
 
 	public Long getId() {
@@ -85,44 +85,44 @@ public class Solution {
 		this.solution = solution;
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public Date getCreated_at() {
+		return created_at;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setCreated_at(Date createdAt) {
+		this.created_at = createdAt;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public Date getUpdated_at() {
+		return updated_at;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdated_at(Date updatedAt) {
+		this.updated_at = updatedAt;
 	}
 
-	public int getUpVotes() {
-		return upVotes;
+	public int getUp_votes() {
+		return up_votes;
 	}
 
-	public void setUpVotes(int upVotes) {
-		this.upVotes = upVotes;
+	public void setUp_votes(int upVotes) {
+		this.up_votes = upVotes;
 	}
 
-	public int getDownVotes() {
-		return downVotes;
+	public int getDown_votes() {
+		return down_votes;
 	}
 
-	public void setDownVotes(int downVotes) {
-		this.downVotes = downVotes;
+	public void setDown_votes(int downVotes) {
+		this.down_votes = downVotes;
 	}
 
-	public boolean isCorrect() {
-		return isCorrect;
+	public boolean isIs_correct() {
+		return is_correct;
 	}
 
-	public void setCorrect(boolean correct) {
-		isCorrect = correct;
+	public void setIs_correct(boolean correct) {
+		is_correct = correct;
 	}
 
 	public MyUser getOwner() {
@@ -143,11 +143,11 @@ public class Solution {
 
 	@PrePersist
 	protected void onCreate() {
-		this.createdAt = new Date();
+		this.created_at = new Date();
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		this.updatedAt = new Date();
+		this.updated_at = new Date();
 	}
 }

@@ -16,15 +16,15 @@ public class Vote {
 
 	@Column(name = "vote_type", nullable = true)
 	@JsonView(VoteView.class)
-	private Boolean voteType;
+	private Boolean vote_type;
 
 	@Column(name = "created_at")
 	@JsonView(VoteView.class)
-	private Date createdAt;
+	private Date created_at;
 
 	@Column(name = "updated_at")
 	@JsonView(VoteView.class)
-	private Date updatedAt;
+	private Date updated_at;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -40,11 +40,11 @@ public class Vote {
 	}
 
 	public Vote(Boolean voteType, MyUser user, Solution solution) {
-		this.voteType = voteType;
+		this.vote_type = voteType;
 		this.user = user;
 		this.solution = solution;
-		this.createdAt = new Date();
-		this.updatedAt = new Date();
+		this.created_at = new Date();
+		this.updated_at = new Date();
 	}
 
 	public Long getId() {
@@ -55,29 +55,29 @@ public class Vote {
 		this.id = id;
 	}
 
-	public Boolean getVoteType() {
-		return voteType;
+	public Boolean getVote_type() {
+		return vote_type;
 	}
 
-	public void setVoteType(Boolean voteType) {
-		this.voteType = voteType;
-		this.updatedAt = new Date();
+	public void setVote_type(Boolean voteType) {
+		this.vote_type = voteType;
+		this.updated_at = new Date();
 	}
 
-	public Date getCreatedAt() {
-		return createdAt;
+	public Date getCreated_at() {
+		return created_at;
 	}
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
+	public void setCreated_at(Date createdAt) {
+		this.created_at = createdAt;
 	}
 
-	public Date getUpdatedAt() {
-		return updatedAt;
+	public Date getUpdated_at() {
+		return updated_at;
 	}
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdated_at(Date updatedAt) {
+		this.updated_at = updatedAt;
 	}
 
 	public MyUser getUser() {
@@ -98,11 +98,11 @@ public class Vote {
 
 	@PrePersist
 	protected void onCreate() {
-		this.createdAt = new Date();
+		this.created_at = new Date();
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		this.updatedAt = new Date();
+		this.updated_at = new Date();
 	}
 }
